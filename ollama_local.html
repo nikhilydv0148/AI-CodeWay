@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Run AI Locally with Ollama</title>
+  <link rel="stylesheet" href="style.css">
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #1d3557;
+    }
+
+    .highlight {
+      background: #e8f0fe;
+      border-left: 4px solid #457b9d;
+      padding: 10px 15px;
+      margin: 15px 0;
+      border-radius: 6px;
+    }
+
+    .code-box {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: monospace;
+      overflow-x: auto;
+      margin: 15px 0;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .summary-table th, .summary-table td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    .summary-table th {
+      background: #edf2f4;
+    }
+
+    @media (max-width: 600px) {
+      .summary-table, .summary-table thead, .summary-table tbody, .summary-table th, .summary-table td, .summary-table tr {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💻 Run AI Models Locally Using Ollama</h1>
+
+    <div class="highlight">
+      <strong>Problem:</strong> Cloud AI tools need internet, may cost money, and raise privacy concerns.
+    </div>
+
+    <div class="highlight">
+      <strong>Solution:</strong> Use <strong>Ollama</strong> to run AI models locally — <em>free, private, and offline</em>.
+    </div>
+
+    <h2>🧰 Requirements</h2>
+    <ul>
+      <li>Windows, Mac, or Linux</li>
+      <li>Minimum 8 GB RAM (16 GB recommended)</li>
+      <li>5–10 GB storage per model</li>
+    </ul>
+
+    <h2>⚙️ Step-by-Step Process</h2>
+
+    <h3>1️⃣ Install Ollama</h3>
+    <p>Visit: <a href="https://ollama.com" target="_blank">https://ollama.com</a><br>Or use terminal:</p>
+    <div class="code-box">
+      curl -fsSL https://ollama.com/install.sh | sh
+    </div>
+
+    <h3>2️⃣ Run a Model</h3>
+    <p>Example — Run Mistral model:</p>
+    <div class="code-box">
+      ollama run mistral
+    </div>
+    <p>Other models:</p>
+    <div class="code-box">
+      ollama run llama3<br>
+      ollama run phi3<br>
+      ollama run codellama<br>
+      ollama run gemma
+    </div>
+
+    <h3>3️⃣ Chat Offline</h3>
+    <p>Ask questions, write code, summarize text — just like ChatGPT, but 100% offline!</p>
+
+    <h3>4️⃣ Optional: Add Audio (voice input/output)</h3>
+    <p>Use Whisper for speech-to-text, Bark or XTTS for text-to-speech (install separately).</p>
+
+    <h2>🌐 Language & Audio Support</h2>
+    <ul>
+      <li>Supports English, Hindi & 50+ other languages (depends on model)</li>
+      <li>Use with voice tools for audio input/output</li>
+    </ul>
+
+    <h2>📌 Summary</h2>
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Free & Open Source</td>
+          <td>✅ Yes</td>
+        </tr>
+        <tr>
+          <td>Internet Required</td>
+          <td>❌ No (after install)</td>
+        </tr>
+        <tr>
+          <td>Data Privacy</td>
+          <td>✅ Full Control</td>
+        </tr>
+        <tr>
+          <td>Multi-language Support</td>
+          <td>✅ Yes</td>
+        </tr>
+        <tr>
+          <td>Audio Input/Output</td>
+          <td>🔄 Via Whisper / XTTS</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
