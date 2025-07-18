@@ -4,93 +4,525 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Run AI Locally with Ollama</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="style.css">
    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      color: #000000;
+    * {
       margin: 0;
       padding: 0;
-    }
-    header{
-        background-color: #000000;
-        color: white;
+      box-sizing: border-box;
     }
 
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --dark-bg: #0a0a0a;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --success: #00d4aa;
+      --warning: #ffb800;
+      --error: #ff5757;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+      z-index: -1;
+      animation: backgroundPulse 15s ease-in-out infinite;
+    }
+
+    @keyframes backgroundPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+
+    /* Header
+    header {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 1rem 0;
+    } */
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-gradient);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* Container */
     .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
     }
 
-    h1, h2 {
-      color: #1d3557;
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 4rem 0;
+      margin-bottom: 3rem;
     }
 
-    .highlight {
-      background: #e8f0fe;
-      border-left: 4px solid #457b9d;
-      padding: 10px 15px;
-      margin: 15px 0;
-      border-radius: 6px;
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      animation: slideInUp 0.8s ease-out;
     }
 
-    .code-box {
-      background: #272822;
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      animation: slideInUp 0.8s ease-out 0.2s both;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--accent-gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .problem-card {
+      background: linear-gradient(135deg, rgba(255, 87, 87, 0.1) 0%, rgba(255, 87, 87, 0.05) 100%);
+      border: 1px solid rgba(255, 87, 87, 0.3);
+    }
+
+    .solution-card {
+      background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(0, 212, 170, 0.05) 100%);
+      border: 1px solid rgba(0, 212, 170, 0.3);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: white;
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .card p {
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Section Headers */
+    .section-header {
+      font-size: 2rem;
+      font-weight: 600;
+      margin: 3rem 0 1.5rem 0;
+      background: var(--secondary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Code Blocks */
+    .code-block {
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .code-block::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--accent-gradient);
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .code-content {
+      font-family: 'JetBrains Mono', monospace;
       color: #f8f8f2;
-      padding: 10px;
-      border-radius: 5px;
-      font-family: monospace;
       overflow-x: auto;
-      margin: 15px 0;
+      line-height: 1.5;
     }
 
-    ul {
-      padding-left: 20px;
+    .code-content .command {
+      color: #a6e22e;
     }
 
+    .code-content .comment {
+      color: #75715e;
+    }
+
+    /* Requirements Grid */
+    .requirements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .requirement-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .requirement-item:hover {
+      transform: translateY(-3px);
+    }
+
+    .requirement-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .step {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent-gradient);
+    }
+
+    .step-number {
+      display: inline-block;
+      background: var(--primary-gradient);
+      color: white;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .step h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .step p {
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    /* Model Grid */
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .model-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .model-item:hover {
+      background: var(--glass-bg);
+      transform: translateY(-2px);
+    }
+
+    .model-item code {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--success);
+    }
+
+    /* Summary Table */
     .summary-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin: 2rem 0;
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
     }
 
-    .summary-table th, .summary-table td {
-      padding: 10px;
-      border: 1px solid #ccc;
+    .summary-table th,
+    .summary-table td {
+      padding: 1rem;
       text-align: left;
+      border-bottom: 1px solid var(--border);
     }
 
     .summary-table th {
-      background: #edf2f4;
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      font-weight: 600;
     }
 
-    @media (max-width: 600px) {
-      .summary-table, .summary-table thead, .summary-table tbody, .summary-table th, .summary-table td, .summary-table tr {
-        display: block;
+    .summary-table td {
+      color: var(--text-secondary);
+    }
+
+    .summary-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .status-yes {
+      background: rgba(0, 212, 170, 0.2);
+      color: var(--success);
+    }
+
+    .status-no {
+      background: rgba(255, 87, 87, 0.2);
+      color: var(--error);
+    }
+
+    .status-partial {
+      background: rgba(255, 184, 0, 0.2);
+      color: var(--warning);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
       }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      .requirements-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .model-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Scroll animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Copy button for code blocks */
+    .copy-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--glass-bg);
+      color: var(--text-primary);
     }
   </style>
 </head>
 <body>
-      <header>
+   <header>
         <div class="light-line"></div>
-        <!-- <div class="light-line ht"></div> -->
-        <!-- <div class="light-line vl"></div>
-        <div class="light-line vr"></div> -->
+     
 
         <div class="left">
             <h3>AI&Code Way</h3>
         </div>
         <div class="right">
             <ul>
-                <li><a href="./index.html">Home</a></li>
-                <li><a href="./aitools.html">AI tools</a></li>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">AI tools</a></li>
                  <li class="dropdown">
                     <a href="">More+</a>
                     <div class="drp-content">
@@ -107,88 +539,194 @@
 
 
     </header>
+
   <div class="container">
-    <h1>💻 Run AI Models Locally Using Ollama</h1>
+    <section class="hero">
+      <h1><i class="fas fa-desktop"></i> Run AI Models Locally</h1>
+      <p class="hero-subtitle">Experience the power of AI without the cloud - private, free, and completely offline</p>
+    </section>
 
-    <div class="highlight">
-      <strong>Problem:</strong> Cloud AI tools need internet, may cost money, and raise privacy concerns.
+    <div class="card problem-card fade-in">
+      <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3>The Problem</h3>
+      <p>Cloud AI tools require constant internet connectivity, can be expensive with usage-based pricing, and raise serious privacy concerns as your data is processed on external servers.</p>
     </div>
 
-    <div class="highlight">
-      <strong>Solution:</strong> Use <strong>Ollama</strong> to run AI models locally — <em>free, private, and offline</em>.
+    <div class="card solution-card fade-in">
+      <div class="card-icon"><i class="fas fa-magic"></i></div>
+      <h3>The Solution</h3>
+      <p>Use <strong>Ollama</strong> to run powerful AI models locally on your own hardware — completely free, private, and offline once installed.</p>
     </div>
 
-    <h2>🧰 Requirements</h2>
-    <ul>
-      <li>Windows, Mac, or Linux</li>
-      <li>Minimum 8 GB RAM (16 GB recommended)</li>
-      <li>5–10 GB storage per model</li>
-    </ul>
-
-    <h2>⚙️ Step-by-Step Process</h2>
-
-    <h3>1️⃣ Install Ollama</h3>
-    <p>Visit: <a href="https://ollama.com" target="_blank">https://ollama.com</a><br>Or use terminal:</p>
-    <div class="code-box">
-      curl -fsSL https://ollama.com/install.sh | sh
+    <h2 class="section-header"><i class="fas fa-toolbox"></i> Requirements</h2>
+    <div class="requirements-grid fade-in">
+      <div class="requirement-item">
+        <div class="requirement-icon"><i class="fas fa-laptop"></i></div>
+        <h3>Operating System</h3>
+        <p>Windows, macOS, or Linux</p>
+      </div>
+      <div class="requirement-item">
+        <div class="requirement-icon"><i class="fas fa-memory"></i></div>
+        <h3>Memory</h3>
+        <p>8 GB RAM minimum<br>16 GB recommended</p>
+      </div>
+      <div class="requirement-item">
+        <div class="requirement-icon"><i class="fas fa-hdd"></i></div>
+        <h3>Storage</h3>
+        <p>5–10 GB per model</p>
+      </div>
     </div>
 
-    <h3>2️⃣ Run a Model</h3>
-    <p>Example — Run Mistral model:</p>
-    <div class="code-box">
-      ollama run mistral
+    <h2 class="section-header"><i class="fas fa-cogs"></i> Installation & Setup</h2>
+    
+    <div class="steps fade-in">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Install Ollama</h3>
+        <p>Visit the official website or use the terminal command:</p>
+        <div class="code-block">
+          <div class="code-header">
+            <i class="fas fa-globe"></i>
+            <span>Visit: https://ollama.com</span>
+          </div>
+          <div class="code-content">
+            <span class="comment"># Or install via terminal:</span><br>
+            <span class="command">curl -fsSL https://ollama.com/install.sh | sh</span>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Download & Run Models</h3>
+        <p>Start with a popular model like Mistral:</p>
+        <div class="code-block">
+          <div class="code-header">
+            <i class="fas fa-bolt"></i>
+            <span>Run Mistral Model</span>
+          </div>
+          <div class="code-content">
+            <span class="command">ollama run mistral</span>
+          </div>
+          <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+        </div>
+        
+        <p>Other popular models:</p>
+        <div class="model-grid">
+          <div class="model-item">
+            <code>ollama run llama3</code>
+            <p>Meta's Llama 3</p>
+          </div>
+          <div class="model-item">
+            <code>ollama run phi3</code>
+            <p>Microsoft Phi-3</p>
+          </div>
+          <div class="model-item">
+            <code>ollama run codellama</code>
+            <p>Code Llama</p>
+          </div>
+          <div class="model-item">
+            <code>ollama run gemma</code>
+            <p>Google Gemma</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Start Chatting</h3>
+        <p>Once the model is running, you can ask questions, generate code, summarize text, and more — all completely offline, just like ChatGPT!</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Optional: Add Voice Features</h3>
+        <p>Enhance your experience with audio capabilities:</p>
+        <ul style="color: var(--text-secondary); margin-left: 2rem;">
+          <li><i class="fas fa-microphone"></i> <strong>Whisper</strong> for speech-to-text input</li>
+          <li><i class="fas fa-volume-up"></i> <strong>Bark</strong> or <strong>XTTS</strong> for text-to-speech output</li>
+          <li><i class="fas fa-download"></i> Install these separately for full voice interaction</li>
+        </ul>
+      </div>
     </div>
-    <p>Other models:</p>
-    <div class="code-box">
-      ollama run llama3<br>
-      ollama run phi3<br>
-      ollama run codellama<br>
-      ollama run gemma
+
+    <h2 class="section-header"><i class="fas fa-globe"></i> Language & Features</h2>
+    <div class="card fade-in">
+      <h3><i class="fas fa-language"></i> Multilingual Support</h3>
+      <p>Most models support English, Hindi, and 50+ other languages. The exact language support depends on the specific model you choose.</p>
     </div>
 
-    <h3>3️⃣ Chat Offline</h3>
-    <p>Ask questions, write code, summarize text — just like ChatGPT, but 100% offline!</p>
-
-    <h3>4️⃣ Optional: Add Audio (voice input/output)</h3>
-    <p>Use Whisper for speech-to-text, Bark or XTTS for text-to-speech (install separately).</p>
-
-    <h2>🌐 Language & Audio Support</h2>
-    <ul>
-      <li>Supports English, Hindi & 50+ other languages (depends on model)</li>
-      <li>Use with voice tools for audio input/output</li>
-    </ul>
-
-    <h2>📌 Summary</h2>
-    <table class="summary-table">
+    <h2 class="section-header"><i class="fas fa-chart-bar"></i> Feature Comparison</h2>
+    <table class="summary-table fade-in">
       <thead>
         <tr>
           <th>Feature</th>
           <th>Status</th>
+          <th>Details</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>Free & Open Source</td>
-          <td>✅ Yes</td>
+          <td><span class="status-badge status-yes"><i class="fas fa-check"></i> Yes</span></td>
+          <td>Completely free to use and modify</td>
         </tr>
         <tr>
           <td>Internet Required</td>
-          <td>❌ No (after install)</td>
+          <td><span class="status-badge status-no"><i class="fas fa-times"></i> No</span></td>
+          <td>Only needed for initial download</td>
         </tr>
         <tr>
           <td>Data Privacy</td>
-          <td>✅ Full Control</td>
+          <td><span class="status-badge status-yes"><i class="fas fa-shield-alt"></i> Full Control</span></td>
+          <td>Your data never leaves your device</td>
         </tr>
         <tr>
           <td>Multi-language Support</td>
-          <td>✅ Yes</td>
+          <td><span class="status-badge status-yes"><i class="fas fa-check"></i> Yes</span></td>
+          <td>50+ languages supported</td>
         </tr>
         <tr>
           <td>Audio Input/Output</td>
-          <td>🔄 Via Whisper / XTTS</td>
+          <td><span class="status-badge status-partial"><i class="fas fa-cog"></i> Optional</span></td>
+          <td>Via Whisper, Bark, or XTTS</td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <script>
+    function copyCode(button) {
+      const codeBlock = button.closest('.code-block');
+      const code = codeBlock.querySelector('.code-content').textContent;
+      
+      navigator.clipboard.writeText(code.trim()).then(() => {
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+          button.innerHTML = '<i class="fas fa-copy"></i>';
+        }, 2000);
+      });
+    }
+
+    // Intersection Observer for fade-in animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationDelay = '0.1s';
+          entry.target.classList.add('fade-in');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.card, .requirements-grid, .steps, .summary-table').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
 </body>
 </html>
